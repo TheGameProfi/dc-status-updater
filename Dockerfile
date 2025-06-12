@@ -5,7 +5,6 @@ WORKDIR /app
 
 # Copy the script into the container at /app
 COPY ./main.py /app
-COPY ./quotes.txt /app
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --trusted-host pypi.python.org requests
