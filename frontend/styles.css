@@ -1,0 +1,109 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: #0e1116;
+  color: #f4f6f8;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+h1, h2 {
+  margin: 0 0 12px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.card {
+  background: #181d27;
+  border: 1px solid #2a3140;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+input, select {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #30384a;
+  background: #11161f;
+  color: #f4f6f8;
+}
+
+button {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #30384a;
+  background: #11161f;
+  color: #f4f6f8;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.row > * {
+  flex: 1;
+}
+
+.row button {
+  flex: 0 0 auto;
+}
+
+.quotes {
+  max-height: 360px;
+  overflow: auto;
+}
+
+.quote-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: start;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a3140;
+}
+
+.quote-text {
+  font-size: 17px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.small-button {
+  margin-top: 0;
+  min-width: 76px;
+  white-space: nowrap;
+}
+
+.quote-actions {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.status {
+  font-size: 14px;
+  color: #8bd3ff;
+  margin: 8px 0;
+}

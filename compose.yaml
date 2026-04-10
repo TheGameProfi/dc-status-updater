@@ -1,0 +1,13 @@
+services:
+  dc-status-updater:
+    build: .
+    container_name: dc-status-updater
+    environment:
+      TOKEN: "${TOKEN}"
+      INTERVAL: "${INTERVAL:-3600}"
+      PORT: "8000"
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

@@ -1,84 +1,92 @@
-# dc-status-updater 🌀
+# dc-status-updater
 
-A simple Python script that updates your Discord custom status with a random quote from a `.txt` file at a set interval.
+Web UI + API for managing Discord custom status quotes with file-mounted quote lists.
 
-## ✨ Features
+## What changed
 
-* Picks a random line from `quotes.txt`
-* Updates your Discord status using the Discord API
-* Controlled via environment variables (`TOKEN` & `INTERVAL`)
-* Lightweight and easy to run
+- Full refactor from a single loop script to a FastAPI service with browser UI
+- Runtime modes:
+  - Auto-rotate random quotes
+  - Pause
+  - Static custom text (with optional duration)
+  - Static quote from list (with optional duration)
+- Multi-file list storage:
+  - One list per file in `/app/data/lists/*.txt`
+  - One quote per line
+- Dockerized app with optional Docker Compose setup
 
-## ⚙️ Configuration
+## Configuration
 
-### Required Environment Variables
+Environment variables:
 
-* `TOKEN`: Your Discord user token *(⚠️ see note below)*
-* `INTERVAL`: Time in seconds between status updates (e.g., `300` for 5 min)
+- `TOKEN` (required): Discord user token
+- `INTERVAL` (default: `3600`): auto mode interval in seconds
+- `PORT` (default: `8000`): web server port inside container
+- `DATA_DIR` (default: `/app/data`)
+- `LISTS_DIR` (default: `/app/data/lists`)
+- `STATE_FILE` (default: `/app/data/state.json`)
 
-You can set them in your shell or use a `.env` file:
+## Data layout
 
-```
-TOKEN=your_discord_user_token
-INTERVAL=300
-```
+- Lists directory: `/app/data/lists`
+  - Examples: `default.txt`, `work.txt`, `gaming.txt`
+- State file: `/app/data/state.json`
 
-## 📦 Setup & Usage
-
-### Using Docker
-
-1. **Run the container:**
+## Run with Docker
 
 ```bash
+docker build -t dc-status-updater .
 docker run -d \
   --name dc-status-updater \
-  -e TOKEN="your_discord_token" \
+  -e TOKEN="your_discord_user_token" \
   -e INTERVAL=3600 \
-  -v $(pwd)/quotes.txt:/app/quotes.txt \
-  ghcr.io/thegameprofi/dc-status-updater
+  -p 8000:8000 \
+  -v "$(pwd)/data:/app/data" \
+  dc-status-updater
 ```
 
-> 💡 `quotes.txt` is mounted as a volume so you can edit it on your host.
+Open `http://localhost:8000`.
 
-### Using Python
+## Run with Docker Compose
 
-1. **Clone the repo**
+1. Create `.env`:
 
-   ```bash
-   git clone https://github.com/your-username/dc-status-updater.git
-   cd dc-status-updater
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   pip install requests
-   ```
-
-3. **Add your quotes**
-
-   * Create or edit `quotes.txt`
-   * Add one quote per line
-
-4. **Run the script**
-
-   ```bash
-   python main.py
-   ```
-
-## 📄 Example quotes.txt
-
-```
-Hello there 👋
-Coding like a boss 😎
-UwU what's this?
-Time for tea ☕
+```bash
+TOKEN=your_discord_user_token
+INTERVAL=3600
 ```
 
-## ⚠️ Warning
+2. Start:
 
-This script uses a **user token**, which may violate Discord’s Terms of Service. Use responsibly and at your own risk.
+```bash
+docker compose up -d --build
+```
 
-## 📜 License
+Open `http://localhost:8000`.
 
-MIT – free to use, modify, and share. Just be cool 😇
+## Local run (without Docker)
+
+```bash
+python3 -m pip install --user uv
+uv sync --frozen --no-dev --no-install-project
+TOKEN=your_discord_user_token INTERVAL=3600 uv run --no-sync python3 main.py
+```
+
+## API overview
+
+- `GET /api/lists`
+- `POST /api/lists`
+- `DELETE /api/lists/{list_name}`
+- `GET /api/lists/{list_name}/quotes`
+- `POST /api/lists/{list_name}/quotes`
+- `DELETE /api/lists/{list_name}/quotes/{quote_index}`
+- `GET /api/runtime`
+- `PUT /api/runtime`
+- `POST /api/runtime/auto`
+- `POST /api/runtime/pause`
+- `POST /api/runtime/static/custom`
+- `POST /api/runtime/static/list`
+
+## Warning
+
+This project uses a Discord user token and may violate Discord Terms of Service. Use at your own risk.
