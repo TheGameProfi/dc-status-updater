@@ -1,17 +1,22 @@
-FROM python:3.13-alpine
+FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the script into the container at /app
-COPY ./main.py /app
+COPY pyproject.toml uv.lock /app/
+RUN uv sync --frozen --no-dev --no-install-project
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --trusted-host pypi.python.org requests
+COPY app /app/app
+COPY frontend /app/frontend
+COPY main.py /app/main.py
 
 ENV TOKEN=dummy
 ENV INTERVAL=3600
-VOLUME /app/quotes.txt
+ENV PORT=8000
+ENV DATA_DIR=/app/data
+ENV LISTS_DIR=/app/data/lists
+ENV STATE_FILE=/app/data/state.json
 
-# Run app.py when the container launches
-CMD ["python", "-u", "main.py"]
+VOLUME ["/app/data"]
+EXPOSE 8000
+
+CMD ["uv", "run", "--no-sync", "python", "-u", "main.py"]
